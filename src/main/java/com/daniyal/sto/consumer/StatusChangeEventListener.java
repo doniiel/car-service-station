@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class StatusChangeEventListener {
     private final StatusHistoryService statusHistoryService;
 
-    @KafkaListener(topics = "${topic.notification}", groupId = "sto-group")
+    @KafkaListener(topics = "${topic.status}", groupId = "${spring.kafka.consumer.group-id}")
     public void handleStatusChange(StatusChangeEvent event) {
       log.info("Received status change event: {}", event);
       statusHistoryService.addStatusHistory(

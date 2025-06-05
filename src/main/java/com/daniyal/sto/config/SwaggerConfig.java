@@ -18,6 +18,6 @@ public class SwaggerConfig {
                         .version("v1.0")
                         .contact(new Contact()
                                 .name("Daniyal")
-                                .email("daniyal@example.com")));
+                                .email("orynbekdanial8@gmail.com")));
     }
 }

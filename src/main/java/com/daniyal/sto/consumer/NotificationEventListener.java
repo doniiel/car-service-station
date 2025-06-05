@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class NotificationEventListener {
 
-    @KafkaListener(topics = "${topic.notification}", groupId = "sto-group")
+    @KafkaListener(topics = "${topic.notification}", groupId = "${spring.kafka.consumer.group-id}")
     public void handleNotification(NotificationEvent event) {
         log.info("""
             Mock SMS notification sent:

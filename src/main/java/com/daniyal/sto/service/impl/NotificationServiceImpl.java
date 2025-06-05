@@ -26,6 +26,6 @@ public class NotificationServiceImpl implements NotificationService {
         );
 
         var event = NotificationEvent.fromRequest(request, message);
-        kafkaTemplate.send(notificationTopic, event.toString());
+        kafkaTemplate.send(notificationTopic, event);
     }
 }

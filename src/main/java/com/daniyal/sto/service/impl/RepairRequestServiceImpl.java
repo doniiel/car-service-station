@@ -15,6 +15,7 @@ import com.daniyal.sto.service.RepairRequestService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RepairRequestServiceImpl implements RepairRequestService {
@@ -45,7 +47,7 @@ public class RepairRequestServiceImpl implements RepairRequestService {
 
         var savedRequest = requestRepository.save(request);
 
-        var event = StatusChangeEvent.fromRequest(savedRequest.getId(), null, RepairRequestStatus.CREATED, "System", "Request created");
+        var event = StatusChangeEvent.fromRequest(savedRequest.getId(), RepairRequestStatus.NONE, RepairRequestStatus.CREATED, "System", "Request created");
         kafkaTemplate.send(statusTopic, event);
 
         return requestMapper.toDto(savedRequest);
@@ -59,16 +61,21 @@ public class RepairRequestServiceImpl implements RepairRequestService {
         var oldStatus = request.getStatus();
         var newStatus = changeRequest.getNewStatus();
 
-        validateStatusTransition(oldStatus, newStatus);
-
         request.setStatus(newStatus);
         request.setUpdatedAt(LocalDateTime.now());
 
         var statusEvent = StatusChangeEvent.fromRequest(requestId, oldStatus, newStatus, changeRequest.getChangedBy(), changeRequest.getChangeReason());
         kafkaTemplate.send(statusTopic, statusEvent);
 
-        if (newStatus == RepairRequestStatus.CLIENT_NOTIFIED) {
+        if (newStatus == RepairRequestStatus.COMPLETED) {
             notificationService.notifyClient(request);
+            request.setStatus(RepairRequestStatus.CLIENT_NOTIFIED);
+            var event = StatusChangeEvent.fromRequest(requestId,
+                    RepairRequestStatus.COMPLETED,
+                    RepairRequestStatus.CLIENT_NOTIFIED,
+                    "System",
+                    "Client notified");
+            kafkaTemplate.send(statusTopic, event);
         }
 
         return requestMapper.toDto(requestRepository.save(request));
@@ -76,7 +83,9 @@ public class RepairRequestServiceImpl implements RepairRequestService {
 
     @Transactional
     public Page<RepairRequestDto> getRequestsByClient(String clientPhone, Pageable pageable) {
+        log.info("Searching requests for phone: {}", clientPhone);
         var requestsPage = requestRepository.findByClientPhone(clientPhone, pageable);
+        log.info("Found {} requests", requestsPage.getTotalElements());
         return requestsPage.map(requestMapper::toDto);
     }
 
@@ -92,9 +101,5 @@ public class RepairRequestServiceImpl implements RepairRequestService {
         return statusList.stream()
                 .map(statusMapper::toDto)
                 .toList();
-    }
-
-    private void validateStatusTransition(RepairRequestStatus oldStatus, RepairRequestStatus newStatus) {
-        // Реализовать логику валидации переходов между статусами
     }
 }
