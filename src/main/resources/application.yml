@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: sto
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sto
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:/liquibase/master.xml
+
+server:
+  port: 8080
+
+logging:
+  level:
+    ROOT: INFO
+
+topic:
+  status: status-changed-topic
+  notification: notification-topic

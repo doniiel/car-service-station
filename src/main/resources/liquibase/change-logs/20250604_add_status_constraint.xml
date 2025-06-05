@@ -1,0 +1,16 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="20250604_add_status_constraint" author="Daniyal">
+        <addCheckConstraint
+                tableName="requests"
+                constraintName="chk_request_status"
+                condition="status IN ('ACCEPTED', 'PROCESSING', 'REPAIRING', 'COMPLETED')"/>
+        <addCheckConstraint
+                tableName="request_status_history"
+                constraintName="chk_history_status"
+                condition="status IN ('ACCEPTED', 'PROCESSING', 'REPAIRING', 'COMPLETED')"/>
+    </changeSet>
+</databaseChangeLog>
