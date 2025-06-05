@@ -19,7 +19,7 @@ public class RepairRequestDto {
     @Schema(description = "Client's full name", example = "John Doe")
     private String clientName;
 
-    @Schema(description = "Client's phone number", example = "+1234567890")
+    @Schema(description = "Client's phone number", example = "87053725698")
     private String clientPhone;
 
     @Schema(description = "Car model", example = "Toyota Camry")

@@ -1,25 +1,57 @@
-version: '3.8'
 services:
-#  sto-back:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://sto-db:5432/sto
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=postgres
-#      - SPRING_LIQUIBASE_CHANGE_LOG=classpath:/liquibase/master.xml
-#    depends_on:
-#      sto-db:
-#        condition: service_healthy
+  sto:
+    image: d0niiel/sto:s1
+    container_name: sto
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+      - sto-db
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://sto-db:5432/sto
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      SPRING_JPA_HIBERNATE_DDL-AUTO: validate
+      SPRING_LIQUIBASE_CHANGE-LOG: classpath:/liquibase/master.xml
+      TOPIC_STATUS: status-changed-topic
+      TOPIC_NOTIFICATION: notification-topic
+    restart: on-failure
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"  # Changed from localhost to kafka
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092  # Changed from localhost to kafka
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CLUSTER_ID: "Mk3OEYBSD34fcwNTJENDM2Qk"
+
   sto-db:
+    container_name: sto-db
     image: postgres:16
     environment:
-      - POSTGRES_DB=sto
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      POSTGRES_DB: sto
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
     volumes:
       - sto-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -27,5 +59,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
 volumes:
   sto-db-data:

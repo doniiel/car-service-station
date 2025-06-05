@@ -1,0 +1,57 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="20250604_create_status_history_sequence" author="Daniyal">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="status_history_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="status_history_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="20250604_create_status_history_table" author="Daniyal">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="status_history"/>
+            </not>
+        </preConditions>
+        <createTable tableName="status_history">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="request_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_status_history_request"
+                             references="repair_request(id)"/>
+            </column>
+            <column name="old_status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="new_status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="changed_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="changed_by" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="change_reason" type="text"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="20250604_rename_reason_to_change_reason" author="Daniyal">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="status_history"/>
+            <columnExists tableName="status_history" columnName="reason"/>
+            <not>
+                <columnExists tableName="status_history" columnName="change_reason"/>
+            </not>
+        </preConditions>
+        <renameColumn
+                tableName="status_history"
+                oldColumnName="reason"
+                newColumnName="change_reason"
+                columnDataType="text"/>
+    </changeSet>
+</databaseChangeLog>

@@ -15,6 +15,20 @@ spring:
     driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: classpath:/liquibase/master.xml
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: sto-group
+      properties:
+        spring.json.trusted.packages: "*"
+    listener:
+      missing-topics-fatal: false
+
 
 server:
   port: 8080
@@ -24,5 +38,5 @@ logging:
     ROOT: INFO
 
 topic:
-  status: status-changed-topic
+  status: status-changed-topic  # Must match @KafkaListener topic
   notification: notification-topic

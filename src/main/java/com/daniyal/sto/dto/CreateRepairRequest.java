@@ -20,7 +20,7 @@ public class CreateRepairRequest {
 
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^\\+?[0-9\\-\\s]+$", message = "Invalid phone number format")
-    @Schema(description = "Client's phone number", example = "+1234567890")
+    @Schema(description = "Client's phone number", example = "87053725698")
     private String clientPhone;
 
     @NotBlank(message = "Car model is required")

@@ -1,11 +1,11 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
 
 LABEL authors="daniyal"
 
 WORKDIR /app
 
-COPY target/sto-service-1.0.0.jar /app/app.jar
+COPY target/sto-1.0.0-SNAPSHOT.jar /app/app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-Xms512m", "-Xmx1g", "-jar", "/app/app.jar"]
