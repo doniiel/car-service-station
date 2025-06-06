@@ -1,0 +1,182 @@
+{
+	"info": {
+		"_postman_id": "d3bdc177-bbcc-4457-8bcc-b2fe73af383d",
+		"name": "car-service-station",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41519037"
+	},
+	"item": [
+		{
+			"name": "Create Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"clientName\": \"John Doe\",\n    \"clientPhone\": \"+1234567890\",\n    \"carModel\": \"Toyota Camry\",\n    \"carNumber\": \"ABC123\",\n    \"description\": \"Oil change and filter replacement\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/repair-requests",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"repair-requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Request Status",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"newStatus\": \"IN_PROCESSING\",\n    \"changedBy\": \"mechanic123\",\n    \"changeReason\": \"Diagnostics started\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/repair-requests/1/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"repair-requests",
+						"1",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Requests by Client",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"newStatus\": \"IN_PROCESSING\",\n    \"changedBy\": \"mechanic123\",\n    \"changeReason\": \"Diagnostics started\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/repair-requests/by-client?phone=+1234567890",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"repair-requests",
+						"by-client"
+					],
+					"query": [
+						{
+							"key": "phone",
+							"value": "+1234567890"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Requests by Status",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"newStatus\": \"IN_PROCESSING\",\n    \"changedBy\": \"mechanic123\",\n    \"changeReason\": \"Diagnostics started\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/repair-requests/by-client?phone=+1234567890",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"repair-requests",
+						"by-client"
+					],
+					"query": [
+						{
+							"key": "phone",
+							"value": "+1234567890"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Status History",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"newStatus\": \"IN_PROCESSING\",\n    \"changedBy\": \"mechanic123\",\n    \"changeReason\": \"Diagnostics started\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/repair-requests/1/history",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"repair-requests",
+						"1",
+						"history"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
